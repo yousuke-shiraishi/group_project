@@ -19,16 +19,15 @@ if __name__ == '__main__':
             ext_img = detecter.object_detection(flame)
         else:
             break
-        
         key = cv2.waitKey(1) & 0xFF
         if key == ord('q'):
             break
-    cv2.imshow('ext_img',ext_img)
-    cap.release()
     cv2.destroyWindow('flame')
-cv2.imshow('ext_img2', ext_img)
+    cv2.imshow('ext_img',ext_img)
+    cv2.waitKey(0)
+    cap.release()
+    cv2.destroyWindow('ext_img')
     
-        
     
 #検出クラスを使って物体検出
 #検出クラスの中での処理
