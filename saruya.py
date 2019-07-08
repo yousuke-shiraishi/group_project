@@ -1,1 +1,2 @@
-print("we are saruya")
+print('we am saruya')
+print('say year!')
