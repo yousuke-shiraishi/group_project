@@ -1,1 +1,1 @@
-print("i am saruya")
+print("we are saruya")
