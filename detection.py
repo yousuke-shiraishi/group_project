@@ -19,9 +19,8 @@ class detection:
     def __init__(self, cvsize=(224, 224), margin=10):
         
         #ハイパーパラメータ
-        #self.img = img #入力画像
-        self.cvsize = cvsize #切り取るサイズ
-        self.margin=margin #マージン
+        self.cvsize  = cvsize #切り取るサイズ
+        self.margin = margin #マージン
         
         #インスタンス変数
         self.default = None #デフォルト画像
@@ -148,34 +147,41 @@ class detection:
 def main():
     '''
     検出を実行する関数
+    
+    Returns
+    ---------
+    detected_image : 検出した画像
     '''
-    #各クラスをインスタンス化
+    #クラスをインスタンス化
     detecter = detection()
     
     #カメラ起動
     cap = cv2.VideoCapture(0)
+    #cap.set(cv2.CAP_PROP_FRAME_WIDTH, 500)
+    #cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 500)
     sleep(1)
     
     #検出    
     while True:
         ret, flame = cap.read()
-        cv2.imshow('検出中', flame)
+        cv2.imshow('Run', flame)
         if ret:
             detected_image = detecter.object_detection(flame)
                 
             #検出完了したらbreak
             if detected_image is not None:
                 print('検出されました')
+                print('Successed')
                 break
             
         else:
-            print('検出できませんでした')
+            print('Failured')
             break
             
         #'Q'が押されるとbreak
         key = cv2.waitKey(1) & 0xFF
         if key == ord('q'):
-            print('終了ボタンが押されました')
+            print('Pressed finish button')
             break
                 
     #検出結果の出力    
@@ -184,6 +190,13 @@ def main():
         cv2.imshow('検出結果', detected_image)
         cv2.waitKey(0)
         cv2.destroyWindow('検出結果')
+
+    #検出結果の出力
+    cv2.destroyWindow('Run')
+    if detected_image is not None:
+        cv2.imshow('Result', detected_image)
+        cv2.waitKey(0)
+        cv2.destroyWindow('Result')
     cap.release()
     
     return detected_image
