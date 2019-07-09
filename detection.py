@@ -164,7 +164,7 @@ def main():
             detected_image = detecter.object_detection(flame)
                 
             #検出完了したらbreak
-            if detected_image:
+            if detected_image is not None:
                 print('検出されました')
                 break
             
@@ -178,8 +178,12 @@ def main():
             print('終了ボタンが押されました')
             break
                 
-    #検出結果の出力
-    if detected_image:
-        cv2.imshow('検出結果', detected_image)
-    cap.release()
+    #検出結果の出力    
     cv2.destroyWindow('検出中')
+    if detected_image is not None:
+        cv2.imshow('検出結果', detected_image)
+        cv2.waitKey(0)
+        cv2.destroyWindow('検出結果')
+    cap.release()
+    
+    return detected_image

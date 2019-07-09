@@ -5,28 +5,11 @@ from time import sleep
 import detection
 #main.pyの中で必要な関数を定義
 
-#各クラスをインスタンス化
-detecter = detection.detection()
+
 
 #if __name__ == __'main'__でここから処理開始
 if __name__ == '__main__':
-    cap = cv2.VideoCapture(0)
-    sleep(1)
-    while True:
-        ret, flame = cap.read()
-        cv2.imshow('flame',flame)
-        if ret:
-            ext_img = detecter.object_detection(flame)
-        else:
-            break
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord('q'):
-            break
-    cv2.destroyWindow('flame')
-    cv2.imshow('ext_img',ext_img)
-    cv2.waitKey(0)
-    cap.release()
-    cv2.destroyWindow('ext_img')
+    img = detection.main()
     
     
 #検出クラスを使って物体検出
