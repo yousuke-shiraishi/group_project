@@ -1,5 +1,7 @@
 import cv2
 from keras.models import load_model
+from keras.preprocessing.image import load_img, img_to_array
+import numpy as np
 
 from os import listdir
 from os.path import isfile, join
@@ -78,6 +80,7 @@ class predict_class:
     print('This code was runned on date / time below', datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
     
     
+
 if __name__ == '__main__':
     # インスタンスの作成
     predict = predict_class()
@@ -87,3 +90,9 @@ if __name__ == '__main__':
 
     predict.predict(test_image_path + 'aquarius__20190709160943.jpg')
     predict.accuracy_check()
+=======
+# どこまで実行しているか不明になるので...
+#from datetime import datetime
+#print('--------------------------------------------------------------------------------------')
+#print('This code was runned on date / time below', datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
+
