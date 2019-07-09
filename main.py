@@ -3,34 +3,38 @@ import numpy as np
 import cv2
 from time import sleep
 import detection
+import classifier
 #main.pyの中で必要な関数を定義
 
 #各クラスをインスタンス化
 detecter = detection.detection()
+classifier =classify.classify()
+# 正解ラベル
+label = ['cocacola-peach', 'ilohas', 'kuchidoke-momo', 'o-iocha', 'pocari-sweat', 'other_label']
+# 商品価格
+money = {'cocacola-peach':110, 'ilohas':120, 'kuchidoke-momo':130, 'o-iocha':140, 'pocari-sweat':150}
+
 
 #if __name__ == __'main'__でここから処理開始
 if __name__ == '__main__':
-    cap = cv2.VideoCapture(0)
-    sleep(1)
-    while True:
-        ret, flame = cap.read()
-        cv2.imshow('flame',flame)
-        if ret:
-            ext_img = detecter.object_detection(flame)
-        else:
-            break
-        
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord('q'):
-            break
-    cv2.imshow('ext_img',ext_img)
-    cap.release()
-    cv2.destroyWindow('flame')
-cv2.imshow('ext_img2', ext_img)
+    #検出クラスを使って物体検出
+    ext_img = detecter.object_detection(flame)
+    if ext_img is None: #検出されていなかったらやり直し
+        print('商品が正しく検出されませんでした。/n再度商品をレジボックスへセットしてください。')
+        continue
+
+    #分類モデルに画像を入力y
+    pred = classifier.predict(ext_img)
+    pred_name = label[np.argmax(pred)]
+    if pred_label is (None or 'other_label': #分類出来ない、もしくは別の商品だったらやり直し
+        print('正しく分類出来ませんでした。')
+        continue
+    
+    
+
     
         
     
-#検出クラスを使って物体検出
 #検出クラスの中での処理
     #cv2.videocaptureを使って画像を撮影
     #背景差分を使って、物体を検出
