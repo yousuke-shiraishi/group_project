@@ -183,3 +183,5 @@ def main():
         cv2.imshow('検出結果', detected_image)
     cap.release()
     cv2.destroyWindow('検出中')
+    
+    return detected_image
