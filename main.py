@@ -1,8 +1,6 @@
 #import
-import numpy as np
-import cv2
-from time import sleep
 import detection
+<<<<<<< HEAD
 import classifier
 #main.pyの中で必要な関数を定義
 
@@ -35,6 +33,18 @@ if __name__ == '__main__':
     
         
     
+=======
+from classify import predict_class
+#main.pyの中で必要な関数を定義
+
+#if __name__ == __'main'__でここから処理開始
+if __name__ == '__main__':
+    img = detection.main()
+    label = predict_class(img)
+    print(label)
+        
+#検出クラスを使って物体検出
+>>>>>>> f7096fdb25ecd8bf7c43a4cb3f5d2528dfd2a9a5
 #検出クラスの中での処理
     #cv2.videocaptureを使って画像を撮影
     #背景差分を使って、物体を検出

@@ -5,7 +5,11 @@ import numpy as np
 
 def predict_class(image, class_0='dog', class_1='cat'):
     """
+<<<<<<< HEAD
     note : モデルをロードし、分類する関数
+=======
+    note : モデルをロードし、バイナリーで分類する関数
+>>>>>>> f7096fdb25ecd8bf7c43a4cb3f5d2528dfd2a9a5
     ---------------
     """
     #sample = load_img(image, target_size=(224,224))
@@ -21,6 +25,24 @@ def predict_class(image, class_0='dog', class_1='cat'):
         return class_1
     
     
+<<<<<<< HEAD
+=======
+def predict_multi_class(image, class_0='アクエリ', class_1='ソーダフロート', class_2='cc レモン', class_3='ファンタ'):
+    """
+    note : モデルをロードし、マルチラベルで分類する関数
+    ---------------
+    """
+    class_name = [class_0, class_1, class_2, class_3]
+    sample = load_img(image, target_size=(224,224))
+    sample_arr = img_to_array(sample)
+    sample_arr = np.expand_dims(sample_arr, axis=0)
+    sample_arr = sample_arr /255
+    model = load_model('multi_label.h5')
+    result = model.predict(sample_arr)
+    print('result prob', class_name[np.argmax(result)])
+    
+    
+>>>>>>> f7096fdb25ecd8bf7c43a4cb3f5d2528dfd2a9a5
     
     
     
