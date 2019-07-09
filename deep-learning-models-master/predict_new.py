@@ -1,12 +1,5 @@
-import os
-import sys
 import keras
-from keras.applications.vgg16 import VGG16
-from keras.models import Sequential, Model
-from keras.layers import Input, Activation, Dropout, Flatten, Dense
-from keras.preprocessing import image
 import numpy as np
-from keras.applications.inception_v3 import InceptionV3
 from keras.preprocessing import image
 import time
 
@@ -15,7 +8,7 @@ model_dir = './model/'
 model = keras.models.load_model(model_dir + 'model_InceptionV3.hdf5', compile = False)
 time1 = time.time()
 # filename = "./data/validation/coffee_img/coffee_img_0001.jpg"
-filename = "./image_wa.jpg"
+filename = "./images.jpeg"
 img = image.load_img(filename, target_size=(img_height, img_width))
 x = image.img_to_array(img)
 x = np.expand_dims(x, axis=0)
