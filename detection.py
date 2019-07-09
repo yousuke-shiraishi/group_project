@@ -131,9 +131,13 @@ class detection:
                 if y + h > frame.shape[0]:
                     h = h - y + h - frame.shape[0]
 
-                #物体が検出範囲以上であれば検出する
+                #物体が検出範囲以上であれば0埋めして検出
                 if w > rangethreshold and h > rangethreshold:
                     detected_image = frame[y: y + h, x: x + w]
+                    high, width = detected_image.shape[:2]
+                    p_high, p_width = int((224 - high) / 2), int((224 - width) / 2)
+                    detected_image = np.pad(detected_image, [(p_high, p_high), (p_width, p_width), (0, 0)], 'constant')
+                    detected_image = cv2.resize(detected_image, (224, 224))
                     return detected_image
 
                 else:
@@ -157,23 +161,23 @@ def main():
     
     #カメラ起動
     cap = cv2.VideoCapture(0)
-    #cap.set(cv2.CAP_PROP_FRAME_WIDTH, 500)
-    #cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 500)
     sleep(1)
     
     #検出    
     while True:
         ret, flame = cap.read()
         cv2.imshow('Run', flame)
+        
+        #成功
         if ret:
             detected_image = detecter.object_detection(flame)
-                
+            
             #検出完了したらbreak
             if detected_image is not None:
-                print('検出されました')
                 print('Successed')
                 break
-            
+        
+        #失敗
         else:
             print('Failured')
             break
@@ -184,13 +188,6 @@ def main():
             print('Pressed finish button')
             break
                 
-    #検出結果の出力    
-    cv2.destroyWindow('検出中')
-    if detected_image is not None:
-        cv2.imshow('検出結果', detected_image)
-        cv2.waitKey(0)
-        cv2.destroyWindow('検出結果')
-
     #検出結果の出力
     cv2.destroyWindow('Run')
     if detected_image is not None:
