@@ -1,22 +1,14 @@
 #import
-import numpy as np
-import cv2
-from time import sleep
 import detection
 from classify import predict_class
 #main.pyの中で必要な関数を定義
 
-
-
 #if __name__ == __'main'__でここから処理開始
 if __name__ == '__main__':
     img = detection.main()
-    
-    cv2.imwrite('./test.jpg', img)
-    #label = predict_class(img)
-    #print(label)
-    
-    
+    label = predict_class(img)
+    print(label)
+        
 #検出クラスを使って物体検出
 #検出クラスの中での処理
     #cv2.videocaptureを使って画像を撮影
