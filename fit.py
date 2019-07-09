@@ -1,5 +1,13 @@
 import numpy as np
 
+from keras.preprocessing.image import ImageDataGenerator
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, Activation, Flatten
+from keras.layers import Conv2D, MaxPooling2D
+from keras.callbacks import EarlyStopping
+
+import os
+
 
 def load_data_training_and_test(datasetname):
     
@@ -33,15 +41,6 @@ X_test /= 255
 
 
 
-
-
-from keras.preprocessing.image import ImageDataGenerator
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation, Flatten
-from keras.layers import Conv2D, MaxPooling2D
-from keras.callbacks import EarlyStopping
-
-import os
 
 batch_size = 16
 epochs = 8
@@ -159,8 +158,8 @@ model.add(Dense(8))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
 
-model.add(Dense(1))
-model.add(Activation('sigmoid'))
+model.add(Dense(4))
+model.add(Activation('softmax'))
 
 
 set_trainable = False
@@ -179,7 +178,7 @@ for layer in conv_base__.layers:
     print(layer.name, ':', layer.trainable)
 """
 
-model.compile(loss = 'binary_crossentropy',
+model.compile(loss = 'categorical_crossentropy',
              optimizer = 'rmsprop',
              metrics = ['accuracy'])
 
@@ -188,7 +187,6 @@ model.compile(loss = 'binary_crossentropy',
 from datetime import datetime
 print('--------------------------------------------------------------------------------------')
 print('This code was runned on date / time below', datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
-
 
 
 
@@ -203,11 +201,9 @@ print('This code was runned on date / time below', datetime.now().strftime("%Y/%
 
 
 
-
-
 history = model.fit(X_train, y_train,
                    batch_size = batch_size,
-                   epochs = 1,
+                   epochs = 5,
                    validation_data = (X_test, y_test),
                    shuffle = True)
 
@@ -216,7 +212,7 @@ history = model.fit(X_train, y_train,
 # 学習時の設定 (loss，optimizer)
 # optimizerの状態．これにより，学習を終えた時点から正確に学習を再開できます
 
-model.save("dog_vs_cat.h5")
+model.save("multi_label.h5")
 scores = model.evaluate(X_test, y_test, verbose=1)
 
 print('Test loss', scores[0], 'Test accuracy', scores[1])
