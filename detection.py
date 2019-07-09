@@ -3,29 +3,29 @@ import numpy as np
 from time import sleep
 
 
-class detection:
+class Detection:
     '''
     検出を行うクラス
     Parameters
     --------------
     cvsize : 切り取るサイズ
     margin : マージン
-    
+
     Attributes
     ------------
     default : デフォルト画像
     preimg : 1つ前の画像
     '''
     def __init__(self, cvsize=(224, 224), margin=10):
-        
+
         #ハイパーパラメータ
         self.cvsize  = cvsize #切り取るサイズ
         self.margin = margin #マージン
-        
+
         #インスタンス変数
         self.default = None #デフォルト画像
         self.preimg = None #1つ前の画像
-        
+
 
     def _get_background_subtraction(self, img1, img2):
         '''
@@ -81,7 +81,7 @@ class detection:
         """
         #検出範囲
         rangethreshold = int(self.cvsize[0] / 10)
-    
+
         #デフォルト画像
         if self.default is None:
             self.default = self._get_frame(img)
@@ -147,48 +147,48 @@ class detection:
         else:
             pass
 
-            
+
 def main():
     '''
     検出を実行する関数
-    
+
     Returns
     ---------
     detected_image : 検出した画像
     '''
     #クラスをインスタンス化
     detecter = detection()
-    
+
     #カメラ起動
     cap = cv2.VideoCapture(0)
     sleep(1)
-    
-    #検出    
+
+    #検出
     while True:
         sleep(0.2)
         ret, flame = cap.read()
         cv2.imshow('Run', flame)
-        
+
         #成功
         if ret:
             detected_image = detecter.object_detection(flame)
-            
+
             #検出完了したらbreak
             if detected_image is not None:
                 print('Successed')
                 break
-        
+
         #失敗
         else:
             print('Failured')
             break
-            
+
         #'Q'が押されるとbreak
         key = cv2.waitKey(1) & 0xFF
         if key == ord('q'):
             print('Pressed finish button')
             break
-                
+
     #検出結果の出力
     cv2.destroyWindow('Run')
     if detected_image is not None:
@@ -196,5 +196,5 @@ def main():
         cv2.waitKey(0)
         cv2.destroyWindow('Result')
     cap.release()
-    
+
     return detected_image
