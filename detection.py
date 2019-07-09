@@ -165,6 +165,7 @@ def main():
     
     #検出    
     while True:
+        sleep(0.2)
         ret, flame = cap.read()
         cv2.imshow('Run', flame)
         
