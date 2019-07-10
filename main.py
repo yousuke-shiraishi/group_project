@@ -18,15 +18,6 @@ if __name__ == '__main__':
     default_loop = True
     pet_dict = {'アクエリ':140, 'ソーダフロート':150, 'cc レモン':160, 'ファンタ':170}
     pet_lict = ['アクエリ', 'ソーダフロート', 'cc レモン', 'ファンタ']
-    
-    #cap = cv2.VideoCapture(0)
-    #ret, flame = cap.read()
-    #if ret:
-    #    default_image = flame
-    #    cap.release()
-    #else:
-    #    print('miss')
-
 
     #1回の買い物
     while cart_loop == True:
