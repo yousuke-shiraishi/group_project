@@ -18,7 +18,7 @@ class predict_class:
         model : model(.h5)
         test_image_path : テストファイルが入っているディレクトリ
         """
-        self.model = model_from_json(open('s_bottle_model.json').read())
+        self.model = model_from_json(open('bottle_model.json').read())
         self.model.load_weights(model)
         #self.model = load_model(model)
         self.test_image_path = test_image_path
