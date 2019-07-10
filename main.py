@@ -10,14 +10,14 @@ if __name__ == '__main__':
     # クラスがインスタンス化
     detecter1 = detection.Detection()
     claster = classify.predict_class(model='s_bottle_model_weight.hdf5')
-    
+
     #初期値
     cart = []
-    amount = 0
+    amount = []
     cart_loop = True
-    default_loop = True
-    pet_dict = {'アクエリ':140, 'ソーダフロート':150, 'cc レモン':160, 'ファンタ':170}
-    pet_lict = ['アクエリ', 'ソーダフロート', 'cc レモン', 'ファンタ']
+    pet_dict = {'namacha':140, 'soda_float':150, 'cclemon':160, 'fanta_litchi':170, 'cocacola':180}
+    cart_num = {'namacha':0, 'soda_float':0, 'cclemon':0, 'fanta_litchi':0, 'cocacola':0}
+    pet_lict = ['namacha', 'soda_float', 'cclemon', 'fanta_litchi', 'cocacola']
 
     #1回の買い物
     while cart_loop == True:
@@ -39,7 +39,7 @@ if __name__ == '__main__':
                     print('scan_Successed')
                     cv2.destroyWindow('scan_Running')
                     cap.release()
-                    
+
                     #検出結果の出力
                     cv2.imshow('Result', detected_image)
 
@@ -48,11 +48,31 @@ if __name__ == '__main__':
                     #今はラベルが帰って来てるけど、最終的には各クラスの確率を返す関数として、main.pyにてlabel付する。
                     #label = pet_list[np.argmax(claster.predict_multi_class(detected_image))]
 
+                    #商品と値段をリストへ追加
                     cart.append(label)
-                    print('商品は{}:150円です。'.format(label))
-                    print('これでお買い物終了の場合はqを押してください。\nまだ商品がある場合は再度検出ボックスに商品を入れてください。')
-                    print()
-                    
+                    amount.append(pet_dict[label])
+
+                    #カートの個数を更新
+                    cart_num[label] += 1
+
+                    #商品の値段を表示
+                    print('商品は{}:{}円です。\n'.format(label, pet_dict[label]))
+
+                    #これまでの商品と個数を表示
+                    print('読み込み済み商品')
+                    for goods, num in cart_num.items():
+                        if num != 0:
+                            print('{} : {}個'.format(goods, num))
+                        else:
+                            pass
+
+                    # cart内商品の合計金額を出す。
+                    print('合計金額 : {}\n'.format(sum(amount)))
+                    print('この商品を取り消す場合は「r」を押してください\n'\
+                          'これでお買い物終了の場合は「q」を押してください。\n'\
+                          'まだ商品がある場合は再度検出ボックスに商品を入れてください。\n')
+
+                    #商品が取り出されるまでループ
                     cap2 = cv2.VideoCapture(0)
                     detecter2 = detection.Detection()
                     while True:
@@ -78,9 +98,14 @@ if __name__ == '__main__':
                 cart_loop = False
                 break
 
+            #'r'が押されると一つ前の商品を抜く
+            elif key == ord('r'):
+                print('商品が取り消されました\n')
+                cart.pop(-1)
+                amount.pop(-1)
+                print('検出を開始します')
+                continue
+
 
     # cart内商品の合計金額を出す。
-    for pet in cart:
-        amount += pet_dict[pet]
-    print('合計金額は{}円です。しっかり払えや。'.format(amount))
-
+    print('合計金額は{}円です。しっかり払えや。'.format(sum(amount)))
