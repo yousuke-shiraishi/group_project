@@ -118,14 +118,18 @@ if __name__ == '__main__':
                     cart_num[label] -= 1
                     print('検出を開始します')
                     continue
-        
-        key2 = cv2.waitKey(1) & 0xFF
+
+        img = cv2.imread("thanks.jpg")
+        cv2.imshow("Thanks!", img)
+        key2 = cv2.waitKey(0) & 0xFF
         #'e'が押されるとレジの終了
         if key2 == ord('e'):
+            cv2.destroyWindow('Thanks!')
             print('システムが終了しました')
             break
 
         #'s'が押されると検出開始
         elif key2 == ord('s'):
+            cv2.destroyWindow('Thanks!')
             cart_loop = True
             continue
