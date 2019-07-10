@@ -3,7 +3,7 @@ import numpy as np
 from time import sleep
 
 
-class detection:
+class Detection:
     '''
     検出を行うクラス
     Parameters

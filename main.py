@@ -2,22 +2,23 @@
 import detection
 import classify
 import cv2
+from time import sleep
 #main.pyの中で必要な関数を定義
 
 #if __name__ == __'main'__でここから処理開始
 if __name__ == '__main__':
     # クラスがインスタンス化
     detecter = detection.Detection()
-    claster = classify.classify()
-    cap = cv2.VideoCapture(0)
-
+    claster = classify.predict_class()
+    
     cart = []
     amount = 0
     pet_dict = {'アクエリ':140, 'ソーダフロート':150, 'cc レモン':160, 'ファンタ':170}
     pet_lict = ['アクエリ', 'ソーダフロート', 'cc レモン', 'ファンタ']
 
-
-    while True:
+    cart_loop = True
+    while cart_loop == True:
+        cap = cv2.VideoCapture(0)
         print('検出開始します。')
 
         #検出タスク
@@ -35,6 +36,18 @@ if __name__ == '__main__':
                     print('scan_Successed')
                     cv2.destroyWindow('scan_Running')
                     cap.release()
+                    cv2.imshow('Result', detected_image)
+
+                    label = claster.predict(detected_image)
+
+                    #今はラベルが帰って来てるけど、最終的には各クラスの確率を返す関数として、main.pyにてlabel付する。
+                    #label = pet_list[np.argmax(claster.predict_multi_class(detected_image))]
+
+                    cart.append(label)
+                    print('商品は{}:150円です。'.format(label))
+                    print('これでお買い物終了の場合はqを押してください。\nまだ商品がある場合は再度検出ボックスに商品を入れてください。')
+                    cv2.destroyWindow('Result')
+                    
                     break
 
             #失敗
@@ -46,24 +59,9 @@ if __name__ == '__main__':
             key = cv2.waitKey(1) & 0xFF
             if key == ord('q'):
                 print('Pressed finish button')
+                cart_loop = False
                 break
-
-        #検出結果の出力
-        cv2.imshow('Result', detected_image)
-
-        label = claster.predict_multi_class(detected_image)
-
-        #今はラベルが帰って来てるけど、最終的には各クラスの確率を返す関数として、main.pyにてlabel付する。
-        #label = pet_list[np.argmax(claster.predict_multi_class(detected_image))]
-
-        cart.append(label)
-        print('商品は{}:150円です。'.format(label))
-        print('これでお買い物終了の場合はqを押してください。/nまだ商品がある場合は再度検出ボックスに商品を入れてください。')
-        #'a'が押されるとbreak
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord('a'):
-            print('Pressed finish button')
-            break
+    
 
     # cart内商品の合計金額を出す。
     for pet in cart:
