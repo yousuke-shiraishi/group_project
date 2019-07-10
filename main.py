@@ -3,20 +3,32 @@ import detection
 import classify
 import cv2
 from time import sleep
-#main.pyの中で必要な関数を定義
+import numpy as np
 
 #if __name__ == __'main'__でここから処理開始
 if __name__ == '__main__':
     # クラスがインスタンス化
-    detecter = detection.Detection()
-    claster = classify.predict_class()
+    detecter1 = detection.Detection()
+    claster = classify.predict_class(model='s_bottle_model_weight.hdf5')
     
+    #初期値
     cart = []
     amount = 0
+    cart_loop = True
+    default_loop = True
     pet_dict = {'アクエリ':140, 'ソーダフロート':150, 'cc レモン':160, 'ファンタ':170}
     pet_lict = ['アクエリ', 'ソーダフロート', 'cc レモン', 'ファンタ']
+    
+    #cap = cv2.VideoCapture(0)
+    #ret, flame = cap.read()
+    #if ret:
+    #    default_image = flame
+    #    cap.release()
+    #else:
+    #    print('miss')
 
-    cart_loop = True
+
+    #1回の買い物
     while cart_loop == True:
         cap = cv2.VideoCapture(0)
         print('検出開始します。')
@@ -29,13 +41,15 @@ if __name__ == '__main__':
 
             #成功
             if ret:
-                detected_image = detecter.object_detection(flame)
+                detected_image = detecter1.object_detection(flame)
 
                 #検出完了したらbreak
                 if detected_image is not None:
                     print('scan_Successed')
                     cv2.destroyWindow('scan_Running')
                     cap.release()
+                    
+                    #検出結果の出力
                     cv2.imshow('Result', detected_image)
 
                     label = claster.predict(detected_image)
@@ -46,8 +60,19 @@ if __name__ == '__main__':
                     cart.append(label)
                     print('商品は{}:150円です。'.format(label))
                     print('これでお買い物終了の場合はqを押してください。\nまだ商品がある場合は再度検出ボックスに商品を入れてください。')
-                    cv2.destroyWindow('Result')
+                    print()
                     
+                    cap2 = cv2.VideoCapture(0)
+                    detecter2 = detection.Detection()
+                    while True:
+                        ret, flame = cap2.read()
+                        non_detected_image = detecter2.object_detection(flame)
+                        if non_detected_image is not None:
+                            cap2.release()
+                            break
+                        else:
+                            continue
+                    cv2.destroyWindow('Result')
                     break
 
             #失敗
@@ -61,7 +86,7 @@ if __name__ == '__main__':
                 print('Pressed finish button')
                 cart_loop = False
                 break
-    
+
 
     # cart内商品の合計金額を出す。
     for pet in cart:

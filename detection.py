@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-from time import sleep
 
 
 class Detection:
@@ -146,55 +145,3 @@ class Detection:
                 pass
         else:
             pass
-
-            
-def main():
-    '''
-    検出を実行する関数
-    
-    Returns
-    ---------
-    detected_image : 検出した画像
-    '''
-    #クラスをインスタンス化
-    detecter = detection()
-    
-    #カメラ起動
-    cap = cv2.VideoCapture(0)
-    sleep(1)
-    
-    #検出    
-    while True:
-        sleep(0.2)
-        ret, flame = cap.read()
-        cv2.imshow('Run', flame)
-        
-        #成功
-        if ret:
-            detected_image = detecter.object_detection(flame)
-            
-            #検出完了したらbreak
-            if detected_image is not None:
-                print('Successed')
-                break
-        
-        #失敗
-        else:
-            print('Failured')
-            break
-            
-        #'Q'が押されるとbreak
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord('q'):
-            print('Pressed finish button')
-            break
-                
-    #検出結果の出力
-    cv2.destroyWindow('Run')
-    if detected_image is not None:
-        cv2.imshow('Result', detected_image)
-        cv2.waitKey(0)
-        cv2.destroyWindow('Result')
-    cap.release()
-    
-    return detected_image
