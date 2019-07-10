@@ -23,6 +23,7 @@ if __name__ == '__main__':
     while True:
         #買い物開始
         while cart_loop == True:
+            print('cart')
             cap = cv2.VideoCapture(0)
             print('検出を開始します。')
 
@@ -107,6 +108,7 @@ if __name__ == '__main__':
                     print('合計金額は{}円です。しっかり払えや。\n'.format(sum(amount)))
                     print('「s」を押すと会計開始\n'\
                           '「e」を押すとシステム終了')
+                    break #kensyutu
 
                 #'r'が押されると一つ前の商品を抜く
                 elif key == ord('r'):
@@ -116,7 +118,7 @@ if __name__ == '__main__':
                     cart_num[label] -= 1
                     print('検出を開始します')
                     continue
-
+        
         key2 = cv2.waitKey(1) & 0xFF
         #'e'が押されるとレジの終了
         if key2 == ord('e'):
