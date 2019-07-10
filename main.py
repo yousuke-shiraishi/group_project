@@ -1,68 +1,72 @@
 #import
 import detection
-<<<<<<< HEAD
-import classifier
-#main.pyの中で必要な関数を定義
-
-#各クラスをインスタンス化
-detecter = detection.detection()
-classifier =classify.classify()
-# 正解ラベル
-label = ['cocacola-peach', 'ilohas', 'kuchidoke-momo', 'o-iocha', 'pocari-sweat', 'other_label']
-# 商品価格
-money = {'cocacola-peach':110, 'ilohas':120, 'kuchidoke-momo':130, 'o-iocha':140, 'pocari-sweat':150}
-
-
-#if __name__ == __'main'__でここから処理開始
-if __name__ == '__main__':
-    #検出クラスを使って物体検出
-    ext_img = detecter.object_detection(flame)
-    if ext_img is None: #検出されていなかったらやり直し
-        print('商品が正しく検出されませんでした。/n再度商品をレジボックスへセットしてください。')
-        continue
-
-    #分類モデルに画像を入力y
-    pred = classifier.predict(ext_img)
-    pred_name = label[np.argmax(pred)]
-    if pred_label is (None or 'other_label': #分類出来ない、もしくは別の商品だったらやり直し
-        print('正しく分類出来ませんでした。')
-        continue
-    
-    
-
-    
-        
-    
-=======
-from classify import predict_class
+import classify
+import cv2
 #main.pyの中で必要な関数を定義
 
 #if __name__ == __'main'__でここから処理開始
 if __name__ == '__main__':
-    img = detection.main()
-    label = predict_class(img)
-    print(label)
-        
-#検出クラスを使って物体検出
->>>>>>> f7096fdb25ecd8bf7c43a4cb3f5d2528dfd2a9a5
-#検出クラスの中での処理
-    #cv2.videocaptureを使って画像を撮影
-    #背景差分を使って、物体を検出
-    #いくつかの条件を元に検出したものを確定させて画像として排出
-    #条件例、１,検出された物体がある閾値以上のサイズとなる。2,前回の検出された物体と、状態が変わらなければ(落ち着いたら)等
+    # クラスがインスタンス化
+    detecter = detection.Detection()
+    claster = classify.classify()
+    cap = cv2.VideoCapture(0)
 
-#検出クラスを使って画像を排出
+    cart = []
+    amount = 0
+    pet_dict = {'アクエリ':140, 'ソーダフロート':150, 'cc レモン':160, 'ファンタ':170}
+    pet_lict = ['アクエリ', 'ソーダフロート', 'cc レモン', 'ファンタ']
 
-#(仮)ペットボトルかどうかを分類するモデルを使って分類
 
-#排出された画像を使って分類モデルへ渡す。
+    while True:
+        print('検出開始します。')
 
-    #分類が出来たら、dictに追加。
-    #print(これで買い物終了ですか？)的なメッセージをだして、客からの反応を待つ。
-    #終わりじゃなかったら検出タスクに戻る。
+        #検出タスク
+        while True:
+            sleep(0.2)
+            ret, flame = cap.read()
+            cv2.imshow('scan_Running',flame)
 
-    #分類が出来なかったら、(確度が低い or 別のものとしての検出)
-    #print('正しく検出出来ません')的なメッセージを出して、検出タスクへ戻る。
+            #成功
+            if ret:
+                detected_image = detecter.object_detection(flame)
 
-#買い物終了だった場合は合計金額を改めて出力する。
-#リセットボタン(本当は決済会社からのなんかのレスポンス)をおすと検出待ちとなる。
+                #検出完了したらbreak
+                if detected_image is not None:
+                    print('scan_Successed')
+                    cv2.destroyWindow('scan_Running')
+                    cap.release()
+                    break
+
+            #失敗
+            else:
+                print('scan_Failured')
+                continue
+
+            #'q'が押されるとbreak
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord('q'):
+                print('Pressed finish button')
+                break
+
+        #検出結果の出力
+        cv2.imshow('Result', detected_image)
+
+        label = claster.predict_multi_class(detected_image)
+
+        #今はラベルが帰って来てるけど、最終的には各クラスの確率を返す関数として、main.pyにてlabel付する。
+        #label = pet_list[np.argmax(claster.predict_multi_class(detected_image))]
+
+        cart.append(label)
+        print('商品は{}:150円です。'.format(label))
+        print('これでお買い物終了の場合はqを押してください。/nまだ商品がある場合は再度検出ボックスに商品を入れてください。')
+        #'a'が押されるとbreak
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord('a'):
+            print('Pressed finish button')
+            break
+
+    # cart内商品の合計金額を出す。
+    for pet in cart:
+        amount += pet_dict[pet]
+    print('合計金額は{}円です。しっかり払えや。'.format(amount))
+
