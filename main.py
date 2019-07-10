@@ -9,7 +9,7 @@ import numpy as np
 if __name__ == '__main__':
     # クラスがインスタンス化
     detecter1 = detection.Detection()
-    claster = classify.predict_class(model='s_bottle_model_weight.hdf5')
+    claster = classify.predict_class(model='bottle_model_weight.hdf5')
 
     #初期値
     cart = []
@@ -19,93 +19,105 @@ if __name__ == '__main__':
     cart_num = {'namacha':0, 'soda_float':0, 'cclemon':0, 'fanta_litchi':0, 'cocacola':0}
     pet_lict = ['namacha', 'soda_float', 'cclemon', 'fanta_litchi', 'cocacola']
 
-    #1回の買い物
-    while cart_loop == True:
-        cap = cv2.VideoCapture(0)
-        print('検出開始します。')
+    #stand machine
+    while True:
+        
+        #1回の買い物
+        while cart_loop == True:
+            cap = cv2.VideoCapture(0)
+            print('検出開始します。')
 
-        #検出タスク
-        while True:
-            sleep(0.2)
-            ret, flame = cap.read()
-            cv2.imshow('scan_Running',flame)
+            #検出タスク
+            while True:
+                sleep(0.2)
+                ret, flame = cap.read()
+                cv2.imshow('scan_Running',flame)
 
-            #成功
-            if ret:
-                detected_image = detecter1.object_detection(flame)
+                #成功
+                if ret:
+                    detected_image = detecter1.object_detection(flame)
 
-                #検出完了したらbreak
-                if detected_image is not None:
-                    print('scan_Successed')
-                    cv2.destroyWindow('scan_Running')
-                    cap.release()
+                    #検出完了したらbreak
+                    if detected_image is not None:
+                        print('scan_Successed')
+                        cv2.destroyWindow('scan_Running')
+                        cap.release()
+                        
+                        #predict label
+                        label = claster.predict(detected_image)
 
-                    #検出結果の出力
-                    cv2.imshow('Result', detected_image)
+                        #今はラベルが帰って来てるけど、最終的には各クラスの確率を返す関数として、main.pyにてlabel付する。
+                        #label = pet_list[np.argmax(claster.predict_multi_class(detected_image))]
 
-                    label = claster.predict(detected_image)
+                        #商品と値段をリストへ追加
+                        cart.append(label)
+                        amount.append(pet_dict[label])
 
-                    #今はラベルが帰って来てるけど、最終的には各クラスの確率を返す関数として、main.pyにてlabel付する。
-                    #label = pet_list[np.argmax(claster.predict_multi_class(detected_image))]
+                        #カートの個数を更新
+                        cart_num[label] += 1
 
-                    #商品と値段をリストへ追加
-                    cart.append(label)
-                    amount.append(pet_dict[label])
+                        #商品の値段を表示
+                        print('商品は{}:{}円です。\n'.format(label, pet_dict[label]))
 
-                    #カートの個数を更新
-                    cart_num[label] += 1
+                        #これまでの商品と個数を表示
+                        print('読み込み済み商品')
+                        for goods, num in cart_num.items():
+                            if num != 0:
+                                print('{} : {}個'.format(goods, num))
+                            else:
+                                pass
 
-                    #商品の値段を表示
-                    print('商品は{}:{}円です。\n'.format(label, pet_dict[label]))
+                        # cart内商品の合計金額を出す。
+                        print('合計金額 : {}\n'.format(sum(amount)))
+                        print('この商品を取り消す場合は「r」を押してください\n'\
+                              'これでお買い物終了の場合は「q」を押してください。\n'\
+                              'まだ商品がある場合は再度検出ボックスに商品を入れてください。\n')
 
-                    #これまでの商品と個数を表示
-                    print('読み込み済み商品')
-                    for goods, num in cart_num.items():
-                        if num != 0:
-                            print('{} : {}個'.format(goods, num))
-                        else:
-                            pass
+                        #商品が取り出されるまでループ
+                        cap2 = cv2.VideoCapture(0)
+                        detecter2 = detection.Detection()
+                        while True:
+                            ret, flame = cap2.read()
+                            non_detected_image = detecter2.object_detection(flame)
+                            if non_detected_image is not None:
+                                cap2.release()
+                                break
+                            else:
+                                continue
+                        break
 
+                #失敗
+                else:
+                    print('scan_Failured')
+                    continue
+
+                #'q'が押されるとbreak
+                key = cv2.waitKey(1) & 0xFF
+                if key == ord('q'):
+                    print('Pressed finish button')
+                    cart_loop = False
                     # cart内商品の合計金額を出す。
-                    print('合計金額 : {}\n'.format(sum(amount)))
-                    print('この商品を取り消す場合は「r」を押してください\n'\
-                          'これでお買い物終了の場合は「q」を押してください。\n'\
-                          'まだ商品がある場合は再度検出ボックスに商品を入れてください。\n')
-
-                    #商品が取り出されるまでループ
-                    cap2 = cv2.VideoCapture(0)
-                    detecter2 = detection.Detection()
-                    while True:
-                        ret, flame = cap2.read()
-                        non_detected_image = detecter2.object_detection(flame)
-                        if non_detected_image is not None:
-                            cap2.release()
-                            break
-                        else:
-                            continue
-                    cv2.destroyWindow('Result')
+                    cap.release()
+                    cv2.destroyWindow('scan_Running')
+                    print('合計金額は{}円です。しっかり払えや。\n'.format(sum(amount)))
+                    print('please push e or s')
                     break
 
-            #失敗
-            else:
-                print('scan_Failured')
-                continue
+                #'r'が押されると一つ前の商品を抜く
+                elif key == ord('r'):
+                    print('{}が取り消されました\n'.format(label))
+                    cart.pop(-1)
+                    amount.pop(-1)
+                    cart_num[label] -= 1
+                    print('検出を開始します')
+                    continue
 
-            #'q'が押されるとbreak
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord('q'):
-                print('Pressed finish button')
-                cart_loop = False
-                break
-
-            #'r'が押されると一つ前の商品を抜く
-            elif key == ord('r'):
-                print('商品が取り消されました\n')
-                cart.pop(-1)
-                amount.pop(-1)
-                print('検出を開始します')
-                continue
-
-
-    # cart内商品の合計金額を出す。
-    print('合計金額は{}円です。しっかり払えや。'.format(sum(amount)))
+        key = cv2.waitKey(1) & 0xFF
+        #push 'e' end
+        if key == ord('e'):
+            break
+        
+        #push 's' back to start
+        elif key == ord('s'):
+            cart_loop = True
+            continue
