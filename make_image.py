@@ -1,18 +1,28 @@
 import cv2
 import detection
-import datetime
 
 if __name__ == '__main__':
+    detecter1 = detection.Detection()
+
+    cap = cv2.VideoCapture(0)
+    print('撮影を開始します。')
+
+    #検出タスク
+    count = 1
     while True:
-        img = detection.main()
-        
-        #now_dt = datetime.datetime.now()
-        
-        #now_dt = now_dt.strftime('%Y%m%d%H%M%S')
-            
-        #cv2.imwrite('./image/aquarius/aquarius__' + now_dt + '.jpg', img)
-        
-        k = cv2.waitKey(0)
-        
-        if k == 27:
-            break
+        sleep(0.2)
+        ret, flame = cap.read()
+        cv2.imshow('scan_Running',flame)
+
+        #成功
+        if ret:
+            detected_image = detecter1.object_detection(flame)
+
+            #検出完了したら出力へ
+            if detected_image is not None:
+                print('撮影{}回目'.format(count))
+                cv2.imwrite('./image3/cclemon/cclemon__' + str(count) + '.jpg', img)
+                count += 1
+
+                if count == 10:
+                    break
