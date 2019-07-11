@@ -37,7 +37,7 @@ def syoukei(cart_num, amount):
 if __name__ == '__main__':
     # クラスがインスタンス化
     detecter1 = detection.Detection()
-    claster = classify.predict_class(model='bottle_model_weight.hdf5')
+    claster = classify.predict_class(model='bottle_weight_2.hdf5')
 
     #初期値
     cart, amount, cart_num = reset()
@@ -56,7 +56,7 @@ if __name__ == '__main__':
 
             #ビデオ立ち上げ
             cap = cv2.VideoCapture(0)
-            print('検出を開始します。')
+            print('検出を開始します。\n')
 
             #検出タスク
             while True:
@@ -75,14 +75,15 @@ if __name__ == '__main__':
                         cap.release()
 
                         #商品を予測
-                        label = claster.predict(detected_image)
-                        array, std, var = claster.output_logit(image=detected_image, layer_name='activation_49')
-
-                        #今はラベルが帰って来てるけど、最終的には各クラスの確率を返す関数として、main.pyにてlabel付する。
-                        #label = pet_list[np.argmax(claster.predict_multi_class(detected_image))]
+                        label, th = claster.predict(detected_image)
+                        b,g,r =  np.mean(np.mean(detected_image,axis=0),axis=0)
+                        print(b, g, r)
+                        if (b > g) and (b > r):
+                            label = 'soda_float'
+                        print(th)
 
                         #しきい値より大きい(該当しない商品)
-                        if std > 1.0:
+                        if th < 0.8:
                             print('スキャンに失敗しました\n'
                                   '商品を取り出してください')
 
@@ -153,7 +154,7 @@ if __name__ == '__main__':
 
                 #失敗
                 else:
-                    print('スキャンに失敗しました')
+                    print('スキャンに失敗しました\n')
                     continue
 
 
@@ -172,7 +173,7 @@ if __name__ == '__main__':
                     print('お会計')
                     print('合計金額は{}円です。しっかり払えや。\n'.format(sum(amount)))
                     print('s : 会計開始\n'\
-                          'e : システム終了')
+                          'e : システム終了\n')
 
                     #sound
                     pygame.mixer.music.load("sound/okini.mp3") #読み込み
@@ -200,7 +201,7 @@ if __name__ == '__main__':
 
                     #小計の表示
                     syoukei(cart_num, amount)
-                    print('検出を開始します')
+                    print('検出を開始します\n')
 
                     continue
 
@@ -209,7 +210,7 @@ if __name__ == '__main__':
                 elif key == ord('a'):
                     print('最初に戻ります\n\n'\
                           's : 会計開始\n'\
-                          'e : システム終了')
+                          'e : システム終了\n')
                     
                     #買い物ループを止める
                     cart_loop = False

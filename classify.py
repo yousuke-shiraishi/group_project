@@ -18,13 +18,13 @@ class predict_class:
         model : model(.h5)
         test_image_path : テストファイルが入っているディレクトリ
         """
-        self.model = model_from_json(open('bottle_model.json').read())
+        self.model = model_from_json(open('bottle_model_2.json').read())
         self.model.load_weights(model)
         #self.model = load_model(model)
         self.test_image_path = test_image_path
 
 
-    def predict(self, image, class_0='cocacola', class_1='fanta_litchi', class_2='cclemon', class_3='namacha', class_4='soda_float'):
+    def predict(self, image, class_0='soda_float', class_1='fanta_litchi', class_2='cclemon', class_3='namacha', class_4='cocacola'):
         """
         note : 与えられたimageのpathから、多値分類を行う関数
         ----------------
@@ -37,7 +37,7 @@ class predict_class:
         sample_arr = np.expand_dims(image, axis=0)
         sample_arr = sample_arr /255
         result = self.model.predict(sample_arr)
-        return class_name[np.argmax(result)]
+        return class_name[np.argmax(result)], np.max(result)
 
 
     def accuracy_check(self):
