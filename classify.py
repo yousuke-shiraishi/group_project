@@ -10,7 +10,7 @@ import time
 
 
 class predict_class:
-    
+
     def __init__(self, model='multi_label.h5', test_image_path='test_image/'):
         """
         attribute
@@ -22,8 +22,8 @@ class predict_class:
         self.model.load_weights(model)
         #self.model = load_model(model)
         self.test_image_path = test_image_path
-    
-    
+
+
     def predict(self, image, class_0='cocacola', class_1='fanta_litchi', class_2='cclemon', class_3='namacha', class_4='soda_float'):
         """
         note : 与えられたimageのpathから、多値分類を行う関数
@@ -39,7 +39,7 @@ class predict_class:
         result = self.model.predict(sample_arr)
         return class_name[np.argmax(result)]
 
-        
+
     def accuracy_check(self):
         """
         note : test_imageディレクトリ内の複数のテストデータで、モデルの精度判定する関数
@@ -78,14 +78,34 @@ class predict_class:
         # どこまで実行しているか不明になるので...
         print('--------------------------------------------------------------------------------------')
         print('This code was runned on date / time below', datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
-    
-    
+
+    def output_logit(self, image, layer_name='dense_12'):
+        """
+        note : 特定層においてロジットの出力をarrayにて出力する関数
+        ----------
+        attribute
+        layer_name : layer
+        image : 入力された画像のnumpy配列
+        """
+
+        hidden_layer_model = Model(
+            inputs=self.model.input,
+            outputs=self.model.get_layer(layer_name).output)
+
+        image = cv2.resize(image, (224, 224))
+        target = np.reshape(image, (1, image.shape[0], image.shape[1], image.shape[2])).astype('float') / 255.0
+        array = hidden_layer_model.predict(target)
+        std = np.std(array)
+        var = np.var(array)
+
+        return array, std, var
+
 
 '''
 if __name__ == '__main__':
     # インスタンスの作成
     predict = predict_class()
-    
+
     # テストファイルのパスフォルダ名
     test_image_path = 'test_image/'
 
