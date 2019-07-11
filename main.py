@@ -8,15 +8,20 @@ import pygame.mixer
 
 
 def reset():
+    '''
+    商品をリセット
+    '''
     cart = []
     amount = []
     cart_num = {'namacha':0, 'soda_float':0, 'cclemon':0, 'fanta_litchi':0, 'cocacola':0}
-    
+
     return cart, amount, cart_num
 
 
 def syoukei(cart_num, amount):
-    #これまでの商品と個数を表示
+    '''
+    これまでの商品と個数、合計金額を出力
+    '''
     print('読み込み済み商品')
     for goods, num in cart_num.items():
         if num != 0:
@@ -43,7 +48,6 @@ if __name__ == '__main__':
     #音楽の初期設定
     pygame.mixer.quit()
     pygame.mixer.init()
-
 
     #レジの立ち上げ
     while True:
@@ -76,9 +80,11 @@ if __name__ == '__main__':
 
                         #今はラベルが帰って来てるけど、最終的には各クラスの確率を返す関数として、main.pyにてlabel付する。
                         #label = pet_list[np.argmax(claster.predict_multi_class(detected_image))]
-                        
+
                         print('スキャンに成功しました')
-                        pygame.mixer.music.load("sound/sound3.mp3") #読み込み
+
+                        #sound
+                        pygame.mixer.music.load("sound/scan.mp3") #読み込み
                         pygame.mixer.music.play(1) #再生
                         sleep(1.5)
                         pygame.mixer.music.stop() #終了
@@ -95,8 +101,8 @@ if __name__ == '__main__':
 
                         #これまでの商品と個数を表示
                         syoukei(cart_num, amount)
-                        
-                        print('商品を取り出してください\n'\
+
+                        print('商品を取り出してください\n\n'\
                               '直前の商品を取り消す場合は「r」を押してください\n'\
                               'これでお買い物終了の場合は「q」を押してください。\n'\
                               'まだ商品がある場合は再度検出ボックスに商品を入れてください。\n')
@@ -109,12 +115,11 @@ if __name__ == '__main__':
                             non_detected_image = detecter2.object_detection(flame)
                             if non_detected_image is not None:
                                 cap2.release()
-                                break #直前のループ
+                                break
                             else:
                                 continue
-                        break #検出のbreak
+                        break
 
-                    #検出できなかったら無視
                     else:
                         pass
 
@@ -123,42 +128,83 @@ if __name__ == '__main__':
                     print('スキャンに失敗しました')
                     continue
 
+
                 #'q'が押されると会計
                 key = cv2.waitKey(1) & 0xFF
                 if key == ord('q'):
+
                     #買い物ループを止める
                     cart_loop = False
-                    # cart内商品の合計金額を出す。
+
+                    #カメラを止める
                     cap.release()
                     cv2.destroyWindow('scan_Running')
+
+                    # cart内商品の合計金額を出す。
                     print('お会計')
                     print('合計金額は{}円です。しっかり払えや。\n'.format(sum(amount)))
                     print('「s」を押すと会計開始\n'\
                           '「e」を押すとシステム終了')
-                    pygame.mixer.music.load("sound/sound2.mp3") #読み込み
+
+                    #sound
+                    pygame.mixer.music.load("sound/okini.mp3") #読み込み
                     pygame.mixer.music.play(1) #再生
                     sleep(1)
                     pygame.mixer.music.stop() #終了
-                    break #kensyutu
+                    break
+
 
                 #'r'が押されると一つ前の商品を抜く
                 elif key == ord('r'):
                     print('{}が取り消されました\n'.format(label))
+
+                    #取り消し処理
                     cart.pop(-1)
                     amount.pop(-1)
                     cart_num[label] -= 1
+
+                    #sound
+                    pygame.mixer.music.load("sound/ee.mp3") #読み込み
+                    pygame.mixer.music.play(1) #再生
+                    sleep(1)
+                    pygame.mixer.music.stop() #終了
+
+                    #小計の表示
                     syoukei(cart_num, amount)
                     print('検出を開始します')
                     continue
 
 
+                #'a'が押されると最初から
+                elif key == ord('a'):
+                    print('最初に戻ります')
+                    #買い物ループを止める
+                    cart_loop = False
+
+                    #カメラを止める
+                    cap.release()
+                    cv2.destroyWindow('scan_Running')
+
+                    #reset
+                    cart, amount, cart_num = reset()
+
+                    #sound
+                    pygame.mixer.music.load("sound/syuuryou.mp3") #読み込み
+                    pygame.mixer.music.play(1) #再生
+                    sleep(1)
+                    pygame.mixer.music.stop() #終了
+                    break
+
+
+        #初期画像の表示
         img = cv2.imread("thanks.jpg")
         cv2.imshow("Thanks!", img)
         key2 = cv2.waitKey(0) & 0xFF
+
         #'e'が押されるとレジの終了
         if key2 == ord('e'):
             cv2.destroyWindow('Thanks!')
-            
+
             #reset
             cart, amount, cart_num = reset()
             print('システムが終了しました')
@@ -167,15 +213,14 @@ if __name__ == '__main__':
         #'s'が押されると検出開始
         elif key2 == ord('s'):
             cv2.destroyWindow('Thanks!')
-            
+
             #sound
-            pygame.mixer.music.load("sound/sound1.mp3") #読み込み
+            pygame.mixer.music.load("sound/irassyai.mp3") #読み込み
             pygame.mixer.music.play(1) #再生
             sleep(1.5)
             pygame.mixer.music.stop() #終了
-            
-            #reset
+
+            #初期化
             cart, amount, cart_num = reset()
-            
             cart_loop = True
             continue
