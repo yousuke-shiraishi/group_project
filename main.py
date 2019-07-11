@@ -127,11 +127,7 @@ if __name__ == '__main__':
                             #これまでの商品と個数を表示
                             syoukei(cart_num, amount)
 
-                            print('商品を取り出してください\n\n'\
-                                  'r : 直前の商品を取り消す\n'\
-                                  'a : 最初からやり直す\n'\
-                                  'q : お買い物終了\n\n'\
-                                  'まだ商品がある場合は再度検出ボックスに商品を入れてください\n')
+                            print('商品を取り出してください\n')
 
                             #商品が取り出されるまでループ
                             cap2 = cv2.VideoCapture(0)
@@ -145,6 +141,11 @@ if __name__ == '__main__':
                                 else:
                                     continue
 
+                        print('r : 直前の商品を取り消す\n'\
+                              'a : 最初からやり直す\n'\
+                              'q : お買い物終了\n\n'\
+                              'まだ商品がある場合は再度検出ボックスに商品を入れてください\n')
+                        
                         break
 
                     else:
@@ -170,13 +171,13 @@ if __name__ == '__main__':
                     # cart内商品の合計金額を出す。
                     print('お会計')
                     print('合計金額は{}円です。しっかり払えや。\n'.format(sum(amount)))
-                    print('「s」を押すと会計開始\n'\
-                          '「e」を押すとシステム終了')
+                    print('s : 会計開始\n'\
+                          'e : システム終了')
 
                     #sound
                     pygame.mixer.music.load("sound/okini.mp3") #読み込み
                     pygame.mixer.music.play(1) #再生
-                    sleep(1)
+                    sleep(1.5)
                     pygame.mixer.music.stop() #終了
 
                     break
@@ -194,7 +195,7 @@ if __name__ == '__main__':
                     #sound
                     pygame.mixer.music.load("sound/ee.mp3") #読み込み
                     pygame.mixer.music.play(1) #再生
-                    sleep(1)
+                    sleep(1.5)
                     pygame.mixer.music.stop() #終了
 
                     #小計の表示
@@ -206,7 +207,10 @@ if __name__ == '__main__':
 
                 #'a'が押されると初期画面へ
                 elif key == ord('a'):
-                    print('最初に戻ります')
+                    print('最初に戻ります\n\n'\
+                          's : 会計開始\n'\
+                          'e : システム終了')
+                    
                     #買い物ループを止める
                     cart_loop = False
 
@@ -217,7 +221,7 @@ if __name__ == '__main__':
                     #sound
                     pygame.mixer.music.load("sound/syuuryou.mp3") #読み込み
                     pygame.mixer.music.play(1) #再生
-                    sleep(1)
+                    sleep(1.5)
                     pygame.mixer.music.stop() #終了
 
                     break
@@ -244,7 +248,7 @@ if __name__ == '__main__':
             #sound
             pygame.mixer.music.load("sound/irassyai.mp3") #読み込み
             pygame.mixer.music.play(1) #再生
-            sleep(1.5)
+            sleep(2)
             pygame.mixer.music.stop() #終了
 
             #初期化
