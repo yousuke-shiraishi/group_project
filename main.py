@@ -76,48 +76,75 @@ if __name__ == '__main__':
 
                         #商品を予測
                         label = claster.predict(detected_image)
+                        array, std, var = claster.output_logit(image=detected_image, layer_name='activation_49')
 
                         #今はラベルが帰って来てるけど、最終的には各クラスの確率を返す関数として、main.pyにてlabel付する。
                         #label = pet_list[np.argmax(claster.predict_multi_class(detected_image))]
 
-                        print('スキャンに成功しました')
+                        #しきい値より大きい(該当しない商品)
+                        if std > 1.0:
+                            print('スキャンに失敗しました\n'
+                                  '商品を取り出してください')
 
-                        #sound
-                        pygame.mixer.music.load("sound/scan.mp3") #読み込み
-                        pygame.mixer.music.play(1) #再生
-                        sleep(1.5)
-                        pygame.mixer.music.stop() #終了
+                            #sound
+                            pygame.mixer.music.load("sound/zannen.mp3") #読み込み
+                            pygame.mixer.music.play(1) #再生
+                            sleep(1.5)
+                            pygame.mixer.music.stop() #終了
 
-                        #商品と値段をリストへ追加
-                        cart.append(label)
-                        amount.append(pet_dict[label])
+                            #商品が取り出されるまでループ
+                            cap2 = cv2.VideoCapture(0)
+                            detecter2 = detection.Detection()
+                            while True:
+                                ret, flame = cap2.read()
+                                non_detected_image = detecter2.object_detection(flame)
+                                if non_detected_image is not None:
+                                    cap2.release()
+                                    break
+                                else:
+                                    continue
 
-                        #カートの個数を更新
-                        cart_num[label] += 1
+                        #しきい値以下(該当する商品)
+                        else:
+                            print('スキャンに成功しました')
 
-                        #商品の値段を表示
-                        print('商品は{}:{}円です。\n'.format(label, pet_dict[label]))
+                            #sound
+                            pygame.mixer.music.load("sound/scan.mp3") #読み込み
+                            pygame.mixer.music.play(1) #再生
+                            sleep(1.5)
+                            pygame.mixer.music.stop() #終了
 
-                        #これまでの商品と個数を表示
-                        syoukei(cart_num, amount)
+                            #商品と値段をリストへ追加
+                            cart.append(label)
+                            amount.append(pet_dict[label])
 
-                        print('商品を取り出してください\n\n'\
-                              'r : 直前の商品を取り消す\n'\
-                              'a : 最初からやり直す\n'\
-                              'q : お買い物終了\n\n'\
-                              'まだ商品がある場合は再度検出ボックスに商品を入れてください\n')
+                            #カートの個数を更新
+                            cart_num[label] += 1
 
-                        #商品が取り出されるまでループ
-                        cap2 = cv2.VideoCapture(0)
-                        detecter2 = detection.Detection()
-                        while True:
-                            ret, flame = cap2.read()
-                            non_detected_image = detecter2.object_detection(flame)
-                            if non_detected_image is not None:
-                                cap2.release()
-                                break
-                            else:
-                                continue
+                            #商品の値段を表示
+                            print('商品は{}:{}円です。\n'.format(label, pet_dict[label]))
+
+                            #これまでの商品と個数を表示
+                            syoukei(cart_num, amount)
+
+                            print('商品を取り出してください\n\n'\
+                                  'r : 直前の商品を取り消す\n'\
+                                  'a : 最初からやり直す\n'\
+                                  'q : お買い物終了\n\n'\
+                                  'まだ商品がある場合は再度検出ボックスに商品を入れてください\n')
+
+                            #商品が取り出されるまでループ
+                            cap2 = cv2.VideoCapture(0)
+                            detecter2 = detection.Detection()
+                            while True:
+                                ret, flame = cap2.read()
+                                non_detected_image = detecter2.object_detection(flame)
+                                if non_detected_image is not None:
+                                    cap2.release()
+                                    break
+                                else:
+                                    continue
+
                         break
 
                     else:
