@@ -43,7 +43,6 @@ if __name__ == '__main__':
     cart, amount, cart_num = reset()
     cart_loop = True
     pet_dict = {'namacha':140, 'soda_float':150, 'cclemon':160, 'fanta_litchi':170, 'cocacola':180}
-    pet_lict = ['namacha', 'soda_float', 'cclemon', 'fanta_litchi', 'cocacola']
 
     #音楽の初期設定
     pygame.mixer.quit()
@@ -103,9 +102,10 @@ if __name__ == '__main__':
                         syoukei(cart_num, amount)
 
                         print('商品を取り出してください\n\n'\
-                              '直前の商品を取り消す場合は「r」を押してください\n'\
-                              'これでお買い物終了の場合は「q」を押してください。\n'\
-                              'まだ商品がある場合は再度検出ボックスに商品を入れてください。\n')
+                              'r : 直前の商品を取り消す\n'\
+                              'a : 最初からやり直す\n'\
+                              'q : お買い物終了\n\n'\
+                              'まだ商品がある場合は再度検出ボックスに商品を入れてください\n')
 
                         #商品が取り出されるまでループ
                         cap2 = cv2.VideoCapture(0)
@@ -151,6 +151,7 @@ if __name__ == '__main__':
                     pygame.mixer.music.play(1) #再生
                     sleep(1)
                     pygame.mixer.music.stop() #終了
+
                     break
 
 
@@ -172,10 +173,11 @@ if __name__ == '__main__':
                     #小計の表示
                     syoukei(cart_num, amount)
                     print('検出を開始します')
+
                     continue
 
 
-                #'a'が押されると最初から
+                #'a'が押されると初期画面へ
                 elif key == ord('a'):
                     print('最初に戻ります')
                     #買い物ループを止める
@@ -185,14 +187,12 @@ if __name__ == '__main__':
                     cap.release()
                     cv2.destroyWindow('scan_Running')
 
-                    #reset
-                    cart, amount, cart_num = reset()
-
                     #sound
                     pygame.mixer.music.load("sound/syuuryou.mp3") #読み込み
                     pygame.mixer.music.play(1) #再生
                     sleep(1)
                     pygame.mixer.music.stop() #終了
+
                     break
 
 
