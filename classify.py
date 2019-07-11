@@ -1,5 +1,5 @@
 import cv2
-from keras.models import load_model
+from keras.models import load_model, Model
 from keras.preprocessing.image import load_img, img_to_array
 import numpy as np
 from datetime import datetime
