@@ -19,11 +19,18 @@ if __name__ == '__main__':
     cart_num = {'namacha':0, 'soda_float':0, 'cclemon':0, 'fanta_litchi':0, 'cocacola':0}
     pet_lict = ['namacha', 'soda_float', 'cclemon', 'fanta_litchi', 'cocacola']
 
+    #音楽の初期設定
+    pygame.mixer.quit()
+    pygame.mixer.init()
+
+
     #レジの立ち上げ
     while True:
+
         #買い物開始
         while cart_loop == True:
-            print('cart')
+
+            #ビデオ立ち上げ
             cap = cv2.VideoCapture(0)
             print('検出を開始します。')
 
@@ -40,6 +47,11 @@ if __name__ == '__main__':
                     #検出完了したら出力へ
                     if detected_image is not None:
                         print('スキャンに成功しました')
+                        pygame.mixer.music.load("sound3.mp3") #読み込み
+                        pygame.mixer.music.play(1) #再生
+                        time.sleep(1)
+                        pygame.mixer.music.stop() #終了
+
                         cv2.destroyWindow('scan_Running')
                         cap.release()
 
@@ -108,6 +120,10 @@ if __name__ == '__main__':
                     print('合計金額は{}円です。しっかり払えや。\n'.format(sum(amount)))
                     print('「s」を押すと会計開始\n'\
                           '「e」を押すとシステム終了')
+                    pygame.mixer.music.load("sound2.mp3") #読み込み
+                    pygame.mixer.music.play(1) #再生
+                    time.sleep(1)
+                    pygame.mixer.music.stop() #終了
                     break #kensyutu
 
                 #'r'が押されると一つ前の商品を抜く
@@ -131,5 +147,9 @@ if __name__ == '__main__':
         #'s'が押されると検出開始
         elif key2 == ord('s'):
             cv2.destroyWindow('Thanks!')
+            pygame.mixer.music.load("sound1.mp3") #読み込み
+            pygame.mixer.music.play(1) #再生
+            time.sleep(1.5)
+            pygame.mixer.music.stop() #終了
             cart_loop = True
             continue
